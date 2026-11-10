@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>StudyHub — Student Productivity Platform</title>
+<meta name="description" content="StudyHub helps students organise their studies, manage time, prepare for exams and track academic progress.">
+<meta name="theme-color" content="#0b2f2c">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="StudyHub">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta property="og:title" content="StudyHub — Student Productivity">
+<meta property="og:description" content="Plan your studies, focus with a timer, and track exams, tasks and progress.">
+<script>try{var h=document.documentElement;if(localStorage.getItem('studyhub:theme')==='dark'){h.dataset.theme='dark'}h.dataset.accent=localStorage.getItem('studyhub:accent')==='forest'?'forest':'teal';if(localStorage.getItem('studyhub:collapsed'))h.classList.add('side-collapsed')}catch(e){}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/styles.css">
+<link rel="stylesheet" href="css/design.css">
+</head>
+<body>
+<div id="loader" role="status" aria-label="Loading StudyHub">
+  <div class="loader-inner">
+    <div class="loader-mark" id="loader-mark"></div>
+    <div class="loader-name">Study<em>Hub</em></div>
+    <div class="loader-bar"><span></span></div>
+  </div>
+</div>
+
+<div class="app">
+  <aside class="sidebar" id="sidebar" aria-label="Main navigation">
+    <a class="brand" href="#/dashboard"><div class="brand-mark" id="brand-mark"></div><div class="wordmark">Study<em>Hub</em><small>Study smarter, every day</small></div></a>
+    <nav class="nav" id="nav"></nav>
+    <div class="side-card" id="side-card"></div>
+  </aside>
+  <div class="scrim" id="scrim"></div>
+
+  <div class="main">
+    <header class="topbar" id="topbar">
+      <button class="icon-btn menu-btn" id="menu-btn" aria-label="Open menu"></button>
+      <div class="page-title"><h2 id="page-title">Dashboard</h2><p id="page-sub"></p></div>
+      <div class="spacer"></div>
+      <a class="timer-pill" id="timer-pill" href="#/timer" title="Open timer"><span class="pdot"></span><span data-timer-time>25:00</span></a>
+      <button class="icon-btn theme-toggle" id="theme-toggle" aria-label="Toggle dark mode" title="Toggle light / dark mode"></button>
+      <a class="avatar" id="avatar" href="#/settings" title="Profile &amp; settings"></a>
+    </header>
+    <main id="view" class="view" tabindex="-1"></main>
+  </div>
+
+  <nav class="bottom-nav" id="bottom-nav" aria-label="Quick navigation"></nav>
+</div>
+
+<div id="modal-root"></div>
+<div id="toast-root" aria-live="polite"></div>
+<canvas id="confetti"></canvas>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script src="js/icons.js"></script>
+<script src="js/store.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/charts.js"></script>
+<script src="js/timer.js"></script>
+<script src="js/forms.js"></script>
+<script src="js/pages-main.js"></script>
+<script src="js/pages-tools.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
