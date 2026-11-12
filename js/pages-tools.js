@@ -414,6 +414,7 @@
     const d = S.data;
     v.innerHTML = `
     <div class="grid settings-grid" style="margin-top:8px">
+      ${StudyPro.card()}
       <div class="card">
         <div class="card-head"><h3><span class="head-icon">${icon('user')}</span>Profile</h3></div>
         <form data-form="profile">
@@ -429,7 +430,7 @@
         <div class="setting-row"><div><b>Theme</b><small>Your choice is remembered on this device</small></div>
           <div class="seg">${[['light', 'Light', 'sun'], ['dark', 'Dark', 'moon']].map(([k, l, ic]) => `<button data-act="theme" data-t="${k}" class="${(dark ? 'dark' : 'light') === k ? 'on' : ''}" style="display:inline-flex;align-items:center;gap:6px">${icon(ic).replace('class="ic', 'style="width:15px;height:15px" class="ic')}${l}</button>`).join('')}</div></div>
         <div class="setting-row" style="flex-wrap:wrap"><div><b>Colour palette</b><small>Pick the look that suits you</small></div>
-          <div class="palettes">${[['teal', 'Teal & mint', '#0d9488', '#5eead4'], ['forest', 'Forest & sage', '#2f7a55', '#a7c7a5']].map(([k, l, c1, c2]) => `<button class="palette ${App.accent() === k ? 'on' : ''}" data-act="accent" data-a="${k}" aria-pressed="${App.accent() === k}"><span class="pal-sw" style="background:linear-gradient(135deg,${c2} 0 50%,${c1} 50% 100%)"></span>${l}</button>`).join('')}</div></div>
+          <div class="palettes">${StudyPro.paletteButtons(App.accent())}</div></div>
         <div class="setting-row"><div><b>Timer sound</b><small>Chime when focus sessions and breaks end</small></div><label class="switch"><input type="checkbox" data-sound ${st.sound ? 'checked' : ''}><span></span></label></div>
         <div class="setting-row"><div><b>Focus / break lengths</b><small>${st.focusMin} / ${st.shortMin} / ${st.longMin} minutes</small></div><a class="btn btn-ghost btn-sm" href="#/timer">Adjust</a></div>
       </div>
@@ -481,7 +482,11 @@
       const a = e.target.closest('[data-act]'); if (!a) return;
       const act = a.dataset.act;
       if (act === 'theme') App.setTheme(a.dataset.t);
-      else if (act === 'accent') { App.setAccent(a.dataset.a); UI.toast(`${a.dataset.a === 'forest' ? 'Forest & sage' : 'Teal & mint'} palette applied`, { icon: 'sparkles' }); }
+      else if (act === 'accent') {
+        const k = a.dataset.a, apply = () => { App.setAccent(k); UI.toast(`${StudyPro.paletteName(k)} palette applied`, { icon: 'sparkles' }); };
+        if (StudyPro.proPalette(k)) NextWavePro.gate('Extra colour palettes', apply); else apply();
+      }
+      else if (act === 'pro') NextWavePro.open();
       else if (act === 'export') { UI.download(`studyhub-backup-${tkey()}.json`, JSON.stringify(S.data, null, 2)); UI.toast('Backup file downloaded.', { title: 'Exported', icon: 'download' }); }
       else if (act === 'sample') { if (await UI.confirm('Your current data will be replaced with the sample dataset.', { title: 'Restore sample data?', label: 'Restore' })) { S.reset(); Milestones.check(true); UI.toast('Sample data restored', { icon: 'reset' }); App.refresh(); } }
       else if (act === 'wipe') { if (await UI.confirm('All your sessions, tasks, notes, events, subjects and goals will be permanently deleted. Consider exporting a backup first.', { title: 'Clear everything?', label: 'Delete everything' })) { S.clear(); Timer.s.subjectId = ''; Timer.reset(); UI.toast('All data cleared. A fresh start!', { icon: 'sparkles' }); App.refresh(); } }

@@ -14,7 +14,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta property="og:title" content="StudyHub — Student Productivity">
 <meta property="og:description" content="Plan your studies, focus with a timer, and track exams, tasks and progress.">
-<script>try{var h=document.documentElement;if(localStorage.getItem('studyhub:theme')==='dark'){h.dataset.theme='dark'}h.dataset.accent=localStorage.getItem('studyhub:accent')==='forest'?'forest':'teal';if(localStorage.getItem('studyhub:collapsed'))h.classList.add('side-collapsed')}catch(e){}</script>
+<script>try{var h=document.documentElement;if(localStorage.getItem('studyhub:theme')==='dark'){h.dataset.theme='dark'}var a=localStorage.getItem('studyhub:accent'),pro=localStorage.getItem('nextwave:pro:studyhub');h.dataset.accent=(a==='forest'||(pro&&/^(ocean|sunset|slate)$/.test(a)))?a:'teal';if(localStorage.getItem('studyhub:collapsed'))h.classList.add('side-collapsed')}catch(e){}</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -66,6 +66,8 @@
 <script src="js/forms.js"></script>
 <script src="js/pages-main.js"></script>
 <script src="js/pages-tools.js"></script>
+<script src="nextwave-pro.js"></script>
+<script src="js/pro.js"></script>
 <script src="js/app.js"></script>
 </body>
 </html>

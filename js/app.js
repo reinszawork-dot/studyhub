@@ -10,6 +10,8 @@
     calendar: { title: 'Calendar', icon: 'calendar', group: 'Study tools', sub: () => 'Exams, assignments and study plans' },
     notes: { title: 'Notes', icon: 'notes', group: 'Study tools', sub: () => 'Autosaving notes, organised by subject' },
     subjects: { title: 'Subjects', icon: 'book', group: 'Study tools', sub: () => `${S.data.subjects.length} subjects` },
+    exams: { title: 'Exam Planner', icon: 'flag', group: 'Pro tools', pro: true, sub: () => 'Countdowns and revision plans for every exam' },
+    grades: { title: 'Grades & APS', icon: 'cap', group: 'Pro tools', pro: true, sub: () => 'Weighted marks, what you need, and your APS' },
     goals: { title: 'Goals & Progress', icon: 'target', group: 'Growth', sub: () => 'Goals, streaks and achievements' },
     settings: { title: 'Settings', icon: 'settings', group: 'Account', sub: () => 'Profile, preferences and your data' },
   };
@@ -80,7 +82,12 @@
       this.meta();
       const b = $('#theme-toggle'); if (b) { b.setAttribute('aria-label', t === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'); b.title = b.getAttribute('aria-label'); }
     },
-    accent() { try { return localStorage.getItem('studyhub:accent') === 'forest' ? 'forest' : 'teal'; } catch (e) { return 'teal'; } },
+    accent() {
+      let a = 'teal';
+      try { a = localStorage.getItem('studyhub:accent') || 'teal'; } catch (e) { }
+      if (a === 'forest' || a === 'teal') return a;
+      return window.StudyPro && StudyPro.proPalette(a) && NextWavePro.isPro() ? a : 'teal';
+    },
     setAccent(a, anim) {
       const html = document.documentElement;
       if (anim && !UI.reduced()) { html.classList.add('theme-anim'); clearTimeout(this._t); this._t = setTimeout(() => html.classList.remove('theme-anim'), 600); }
@@ -100,6 +107,7 @@
     setTheme(t) { Theme.apply(t, true); setTimeout(() => App.refresh(), 30); },
     setAccent(a) { Theme.setAccent(a, true); setTimeout(() => App.refresh(), 30); },
     accent: () => Theme.accent(),
+    rebuildNav: () => { buildNav(); updateChrome(); $$('[data-route]').forEach(a => a.classList.toggle('active', a.dataset.route === current)); },
     afterTimer() { if (current === 'timer' || current === 'dashboard' || current === 'goals') App.refresh(); updateChrome(); },
     timerUI,
   };
@@ -142,13 +150,7 @@
     $('#brand-mark').innerHTML = LOGO;
     $('#menu-btn').innerHTML = icon('menu');
     $('#theme-toggle').innerHTML = icon('sun') + icon('moon');
-    const NAV = { dashboard: 'Home', analytics: 'Analytics', timer: 'Timer', tasks: 'Tasks', calendar: 'Calendar', notes: 'Notes', subjects: 'Subjects', goals: 'Progress', settings: 'Settings' };
-    let html = '', g = null;
-    for (const [k, r] of Object.entries(ROUTES)) {
-      if (r.group !== g) { g = r.group; html += `<div class="nav-label">${g}</div>`; }
-      html += `<a href="#/${k}" data-route="${k}" title="${NAV[k]}">${icon(r.icon)}<span>${NAV[k]}</span>${k === 'tasks' ? '<span class="nav-badge" id="task-badge" hidden></span>' : ''}</a>`;
-    }
-    $('#nav').innerHTML = html;
+    buildNav();
     $('#bottom-nav').innerHTML = [['dashboard', 'Home'], ['timer', 'Timer'], ['tasks', 'Tasks'], ['calendar', 'Calendar']].map(([k, l]) => `<a href="#/${k}" data-route="${k}">${icon(ROUTES[k].icon)}<span>${l}</span></a>`).join('') + `<button id="more-btn" aria-label="More pages">${icon('grid')}<span>More</span></button>`;
 
     $('#theme-toggle').onclick = () => App.setTheme(document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark');
@@ -169,6 +171,15 @@
     });
     let rz; addEventListener('resize', () => { clearTimeout(rz); const w = innerWidth; rz = setTimeout(() => { if ((w < 600) !== (App._narrow)) { App._narrow = w < 600; if (current === 'analytics' || current === 'goals' || current === 'calendar') App.refresh(); } }, 250); });
     App._narrow = innerWidth < 600;
+  }
+  function buildNav() {
+    const NAV = { dashboard: 'Home', analytics: 'Analytics', timer: 'Timer', tasks: 'Tasks', calendar: 'Calendar', notes: 'Notes', subjects: 'Subjects', exams: 'Exam planner', grades: 'Grades & APS', goals: 'Progress', settings: 'Settings' };
+    let html = '', g = null;
+    for (const [k, r] of Object.entries(ROUTES)) {
+      if (r.group !== g) { g = r.group; html += `<div class="nav-label">${g}</div>`; }
+      html += `<a href="#/${k}" data-route="${k}" title="${NAV[k]}">${icon(r.icon)}<span>${NAV[k]}</span>${k === 'tasks' ? '<span class="nav-badge" id="task-badge" hidden></span>' : ''}${r.pro && !NextWavePro.isPro() ? StudyPro.badge : ''}</a>`;
+    }
+    $('#nav').innerHTML = html;
   }
   function openDrawer() { $('#sidebar').classList.add('open'); $('#scrim').classList.add('show'); }
   function closeDrawer() { $('#sidebar').classList.remove('open'); $('#scrim').classList.remove('show'); }
