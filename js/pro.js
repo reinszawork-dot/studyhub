@@ -1,23 +1,13 @@
 /* StudyHub Pro — exam countdown planner, grade calculator & APS, extra palettes.
-   Everything that was free stays free; these are new features behind NextWavePro.gate(). */
+   All free, no payments. */
 (function () {
   const { esc, $$ } = UI;
   const P = window.Pages = window.Pages || {};
   const tkey = () => D.key(D.today());
 
-  NextWavePro.init({
-    app: 'studyhub',
-    name: 'StudyHub Pro',
-    price: 'R79 once-off',
-    buyUrl: 'https://payhip.com', // TODO: replace with the StudyHub Pro Payhip product link
-    features: [
-      'Exam countdown planner with auto revision schedules',
-      'Grade calculator: weighted marks and “what do I need?”',
-      'Matric APS score from your subject marks',
-      'Three extra colour palettes',
-    ],
-    accent: '#0d9488',
-  });
+  /* No payments: every feature is free. This stand-in keeps the old
+     NextWavePro calls working with everything unlocked. */
+  window.NextWavePro = { init() {}, open() {}, isPro: () => true, plan: () => 'free', gate: (_f, fn) => fn && fn() };
 
   const isPro = () => NextWavePro.isPro();
   const badge = '<span class="pro-badge" aria-label="Pro feature">Pro</span>';
@@ -35,24 +25,6 @@
     d.pro.grades = d.pro.grades || {};
     d.pro.plans = d.pro.plans || {};
     return d.pro;
-  }
-
-  function upsell(v, ic, title, lead, points, feature) {
-    v.innerHTML = `
-    <div class="card pro-upsell" style="margin-top:8px">
-      <div class="pro-upsell-ico">${icon(ic)}</div>
-      <div class="pro-upsell-body">
-        <span class="pro-badge">StudyHub Pro</span>
-        <h3>${esc(title)}</h3>
-        <p class="muted">${esc(lead)}</p>
-        <ul class="pro-points">${points.map(p => `<li>${icon('check')}<span>${esc(p)}</span></li>`).join('')}</ul>
-        <div class="card-actions" style="margin-top:18px">
-          <button class="btn btn-primary" data-act="unlock">${icon('sparkles')}Unlock StudyHub Pro · R79 once-off</button>
-        </div>
-        <p class="muted small" style="margin-top:10px">Pay once, keep it forever. Everything that’s free in StudyHub stays free.</p>
-      </div>
-    </div>`;
-    v.onclick = e => { if (e.target.closest('[data-act="unlock"]')) NextWavePro.gate(feature, () => App.refresh()); };
   }
 
   /* ======================= EXAM PLANNER ======================= */
@@ -104,9 +76,6 @@
   }
 
   P.exams = function (v) {
-    if (!isPro()) return upsell(v, 'flag', 'Exam countdown planner',
-      'See every exam counting down, and let StudyHub build a revision timetable that fits the days you have left.',
-      ['Live countdown to each exam, with readiness from your logged study time', 'Auto revision plans: choose sessions per week and session length', 'Sessions tick themselves off as you study with the timer', 'Today’s revision list, so you always know what to study next'], 'Exam planner');
 
     const tk = tkey();
     const exams = S.data.events.filter(e => e.type === 'exam' && e.date >= tk).sort((a, b) => (a.date + (a.time || '')).localeCompare(b.date + (b.time || '')));
@@ -217,9 +186,6 @@
   }
 
   P.grades = function (v) {
-    if (!isPro()) return upsell(v, 'cap', 'Grade calculator & APS',
-      'Work out your real term mark from weighted assessments, and see exactly what you need in the final exam to hit your target.',
-      ['Weighted mark per subject from tests, projects and exams', '“What do I need?” for the assessments that are still to come', 'Matric APS score (best six subjects, excluding Life Orientation)', 'One tap to update a subject’s current mark'], 'Grade calculator');
 
     const subs = S.data.subjects, g = pd().grades;
     const ranked = subs.filter(s => !isLO(s)).map(s => ({ s, pts: apsPoints(s.grade) })).sort((a, b) => b.pts - a.pts);
@@ -291,14 +257,7 @@
     paletteButtons(current) {
       return ALL_PALETTES.map(([k, l, c1, c2]) => `<button class="palette ${current === k ? 'on' : ''}" data-act="accent" data-a="${k}" aria-pressed="${current === k}"><span class="pal-sw" style="background:linear-gradient(135deg,${c2} 0 50%,${c1} 50% 100%)"></span>${l}${PRO_KEYS.includes(k) && !isPro() ? badge : ''}</button>`).join('');
     },
-    card() {
-      const pro = isPro();
-      return `<div class="card pro-card">
-        <div class="card-head"><div><h3><span class="head-icon">${icon('sparkles')}</span>NextWave Pro</h3><div class="sub">${pro ? 'StudyHub Pro is unlocked on this device' : 'Exam planner, grade calculator, APS and more palettes'}</div></div></div>
-        <div class="setting-row"><div><b>${pro ? (NextWavePro.plan() === 'all-access' ? 'All-Access' : 'StudyHub Pro') : 'StudyHub Pro'}</b><small>${pro ? 'Thanks for supporting NextWave Digital' : 'R79 once-off · or every NextWave app with All-Access (R249)'}</small></div>
-          <button class="btn ${pro ? 'btn-ghost' : 'btn-primary'} btn-sm" data-act="pro">${icon(pro ? 'check' : 'sparkles')}${pro ? 'Manage' : 'Get Pro'}</button></div>
-      </div>`;
-    },
+    card() { return ''; },
   };
 
   /* keep the chrome in sync with Pro state */

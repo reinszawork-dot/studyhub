@@ -1,0 +1,101 @@
+/* ==========================================================================
+   StudyHub glass layer — ambient teal light behind frosted, translucent
+   surfaces. Loaded last. Follows the active palette through --p-rgb.
+   ========================================================================== */
+:root{
+  --glass:rgba(255,255,255,.58);
+  --glass-strong:rgba(255,255,255,.78);
+  --glass-edge:rgba(255,255,255,.75);
+  --glass-line:rgb(var(--p-rgb) / .12);
+  --glass-blur:saturate(170%) blur(22px);
+  --glass-shine:inset 0 1px 0 rgba(255,255,255,.85);
+  --orb-a:rgb(var(--p-rgb) / .34);
+  --orb-b:rgb(94 234 212 / .30);
+  --orb-c:rgb(14 165 233 / .16);
+}
+[data-theme="dark"]{
+  --glass:rgba(16,38,36,.46);
+  --glass-strong:rgba(14,32,30,.78);
+  --glass-edge:rgba(255,255,255,.10);
+  --glass-line:rgba(255,255,255,.08);
+  --glass-shine:inset 0 1px 0 rgba(255,255,255,.07);
+  --orb-a:rgb(var(--p-rgb) / .26);
+  --orb-b:rgb(20 184 166 / .20);
+  --orb-c:rgb(56 189 248 / .10);
+}
+
+/* --- Ambient background: soft drifting light behind everything --- */
+body{background:var(--bg);isolation:isolate}
+body::before,body::after{content:'';position:fixed;z-index:-1;pointer-events:none;border-radius:50%;filter:blur(70px)}
+body::before{
+  width:62vmax;height:62vmax;left:-14vmax;top:-22vmax;
+  background:radial-gradient(circle at 40% 40%,var(--orb-a),transparent 62%);
+  animation:glass-drift-a 28s ease-in-out infinite alternate;
+}
+body::after{
+  width:58vmax;height:58vmax;right:-16vmax;bottom:-24vmax;
+  background:radial-gradient(circle at 50% 50%,var(--orb-b),transparent 60%),radial-gradient(circle at 20% 20%,var(--orb-c),transparent 55%);
+  animation:glass-drift-b 34s ease-in-out infinite alternate;
+}
+.app::before{
+  content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;
+  background:
+    radial-gradient(40vmax 30vmax at 70% 18%,rgb(var(--p-rgb) / .14),transparent 70%),
+    radial-gradient(30vmax 26vmax at 30% 85%,var(--orb-c),transparent 70%);
+  animation:glass-drift-c 40s ease-in-out infinite alternate;
+}
+@keyframes glass-drift-a{to{transform:translate(12vmax,10vmax) scale(1.08)}}
+@keyframes glass-drift-b{to{transform:translate(-10vmax,-8vmax) scale(1.12)}}
+@keyframes glass-drift-c{to{transform:translate(-4vmax,3vmax)}}
+
+/* --- Frosted surfaces --- */
+.card,.task,.cal-day,.badge-card,.qa-btn,.quick-tile,.date-badge,.palette,.chip{
+  background:var(--glass);
+  border-color:var(--glass-edge);
+  backdrop-filter:var(--glass-blur);-webkit-backdrop-filter:var(--glass-blur);
+}
+.card{box-shadow:var(--glass-shine),0 10px 30px -18px rgb(var(--p-rgb) / .35)}
+.card.lift:hover{box-shadow:var(--glass-shine),var(--shadow)}
+/* Nested items inside a card don't need a second blur */
+.card .task,.card .cal-day,.card .badge-card,.card .chip,.card .date-badge,.card .qa-btn,.card .quick-tile,.card .card{
+  backdrop-filter:none;-webkit-backdrop-filter:none;background:rgba(255,255,255,.42);
+}
+[data-theme="dark"] .card .task,[data-theme="dark"] .card .cal-day,[data-theme="dark"] .card .badge-card,
+[data-theme="dark"] .card .chip,[data-theme="dark"] .card .date-badge,[data-theme="dark"] .card .qa-btn,
+[data-theme="dark"] .card .quick-tile,[data-theme="dark"] .card .card{background:rgba(255,255,255,.035)}
+
+.input,.select,.textarea,.btn-ghost,.icon-btn{background:var(--glass-strong);border-color:var(--glass-line)}
+.seg button.on,.seg.radio input:checked+span{background:var(--glass-strong)}
+
+/* Sidebar: dark tinted glass over the ambient light */
+.sidebar{
+  background-color:color-mix(in srgb,var(--side-bg) 82%,transparent);
+  backdrop-filter:saturate(160%) blur(26px);-webkit-backdrop-filter:saturate(160%) blur(26px);
+  box-shadow:inset -1px 0 0 rgba(255,255,255,.06);
+}
+
+/* Top bar & mobile bottom nav */
+.topbar{background:color-mix(in srgb,var(--bg) 55%,transparent);backdrop-filter:var(--glass-blur);-webkit-backdrop-filter:var(--glass-blur)}
+.topbar.scrolled{border-bottom-color:var(--glass-line)}
+.bottom-nav{background:var(--glass-strong);border-top-color:var(--glass-line);backdrop-filter:var(--glass-blur);-webkit-backdrop-filter:var(--glass-blur)}
+
+/* Hero: frosted highlight over the teal gradient */
+.hero{box-shadow:inset 0 1px 0 rgba(255,255,255,.28),0 30px 60px -30px rgb(var(--p-rgb) / .8)}
+.hero .btn-ghost,.hero .btn-glass{background:rgba(255,255,255,.16);border-color:rgba(255,255,255,.28);color:#fff;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+
+/* Overlays */
+.modal-backdrop{background:rgba(4,22,20,.32);backdrop-filter:blur(10px) saturate(140%);-webkit-backdrop-filter:blur(10px) saturate(140%)}
+.modal,.toast{background:var(--glass-strong);border-color:var(--glass-edge);backdrop-filter:saturate(180%) blur(28px);-webkit-backdrop-filter:saturate(180%) blur(28px);box-shadow:var(--glass-shine),var(--shadow-lg)}
+
+/* --- Accessibility & performance --- */
+@media (prefers-reduced-motion:reduce){
+  body::before,body::after,.app::before{animation:none}
+}
+@media (prefers-reduced-transparency:reduce){
+  .card,.task,.cal-day,.badge-card,.qa-btn,.quick-tile,.date-badge,.palette,.chip,.modal,.toast,.bottom-nav{background:var(--surface);backdrop-filter:none;-webkit-backdrop-filter:none}
+}
+/* Phones: lighter blur keeps scrolling smooth */
+@media (max-width:760px){
+  :root{--glass-blur:saturate(160%) blur(14px)}
+  body::before,body::after{filter:blur(50px)}
+}

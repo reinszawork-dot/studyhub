@@ -1,7 +1,7 @@
 /* StudyHub service worker: offline app shell. Bump VERSION when files are added. */
-const VERSION = 'studyhub-v2';
-const SHELL = ['./', 'index.html', 'css/styles.css', 'css/design.css',
-  'js/icons.js', 'js/store.js', 'js/ui.js', 'js/charts.js', 'js/timer.js', 'js/forms.js', 'js/pages-main.js', 'js/pages-tools.js', 'nextwave-pro.js', 'js/pro.js', 'js/app.js',
+const VERSION = 'studyhub-v4';
+const SHELL = ['./', 'index.html', 'css/styles.css', 'css/design.css', 'css/glass.css',
+  'js/icons.js', 'js/store.js', 'js/ui.js', 'js/charts.js', 'js/timer.js', 'js/forms.js', 'js/pages-main.js', 'js/pages-tools.js', 'js/pro.js', 'js/app.js',
   'manifest.webmanifest', 'icon.svg', 'icon-192.png', 'icon-512.png', 'apple-touch-icon.png'];
 const CDN_HOSTS = ['fonts.googleapis.com', 'fonts.gstatic.com', 'cdn.jsdelivr.net'];
 
