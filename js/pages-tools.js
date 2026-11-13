@@ -153,6 +153,7 @@
       const d = Object.fromEntries(new FormData(f)), title = d.title.trim(); if (!title) return;
       S.add('tasks', { title, subjectId: d.subjectId || null, due: d.due || null, priority: d.priority, done: false, created: Date.now(), doneAt: null });
       UI.toast(`“${title}” added`, { title: 'Task added', icon: 'tasks' });
+      if (TK.filter === 'done') TK.filter = 'active'; // otherwise the new task is hidden behind the Completed filter
       App.refresh();
       setTimeout(() => { const i = $('[data-form="add-task"] [name=title]', v); i && i.focus(); }, 30);
     };
